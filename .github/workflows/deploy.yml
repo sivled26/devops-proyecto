@@ -1,0 +1,74 @@
+name: CI/CD Pipeline - Innovatech
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER: devops-eks
+
+jobs:
+  deploy:
+    name: Build, Push y Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login a Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # --- BACK VENTAS ---
+      - name: Build y Push back-ventas
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/innovatech-backend:latest ./back-Ventas_SpringBoot/Springboot-API-REST
+          docker push $ECR_REGISTRY/innovatech-backend:latest
+
+      # --- BACK DESPACHOS ---
+      - name: Build y Push back-despachos
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/innovatech-backend2:latest ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+          docker push $ECR_REGISTRY/innovatech-backend2:latest
+
+      # --- FRONTEND ---
+      - name: Build y Push front-despacho
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/innovatech-frontend:latest ./front_despacho
+          docker push $ECR_REGISTRY/innovatech-frontend:latest
+
+      # --- DEPLOY A EKS ---
+      - name: Configurar kubectl
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER }}
+
+      - name: Deploy a EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          kubectl set image deployment/back-ventas back-ventas=$ECR_REGISTRY/innovatech-backend:latest
+          kubectl set image deployment/back-despachos back-despachos=$ECR_REGISTRY/innovatech-backend2:latest
+          kubectl set image deployment/front-despacho front-despacho=$ECR_REGISTRY/innovatech-frontend:latest
+          kubectl rollout status deployment/back-ventas
+          kubectl rollout status deployment/back-despachos
+          kubectl rollout status deployment/front-despacho
+
+      - name: Verificar pods
+        run: kubectl get pods
