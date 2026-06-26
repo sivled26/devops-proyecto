@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-despachos
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: back-despachos
+  template:
+    metadata:
+      labels:
+        app: back-despachos
+    spec:
+      containers:
+        - name: back-despachos
+          image: 075692576990.dkr.ecr.us-east-1.amazonaws.com/innovatech-backend2:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  name: back-despachos-secret
+                  key: SPRING_PROFILES_ACTIVE
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-despachos-service
+spec:
+  selector:
+    app: back-despachos
+  ports:
+    - port: 80
+      targetPort: 8081
+  type: ClusterIP

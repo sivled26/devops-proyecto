@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-despacho
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front-despacho
+  template:
+    metadata:
+      labels:
+        app: front-despacho
+    spec:
+      containers:
+        - name: front-despacho
+          image: 075692576990.dkr.ecr.us-east-1.amazonaws.com/innovatech-frontend:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_VENTAS_URL
+              value: "http://back-ventas-service"
+            - name: REACT_APP_DESPACHOS_URL
+              value: "http://back-despachos-service"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-despacho-service
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  selector:
+    app: front-despacho
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
