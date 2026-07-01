@@ -1,9 +1,9 @@
-# 🚀 Proyecto Semestral — Innovatech Chile
+#  Proyecto Semestral — Innovatech Chile
 ### ISY1101 Introducción a Herramientas DevOps | Evaluación Parcial N°3
 
 ---
 
-## 📋 Descripción
+##  Descripción
 
 Este proyecto corresponde a la EP3 de la asignatura ISY1101, donde se implementa una arquitectura de **orquestación y automatización en la nube** utilizando AWS EKS (Elastic Kubernetes Service).
 
@@ -17,7 +17,7 @@ La aplicación está compuesta por 3 servicios:
 
 ---
 
-## 🏗️ Arquitectura
+##  Arquitectura
 
 ```
 GitHub (push a main)
@@ -49,7 +49,7 @@ Amazon CloudWatch (logs y métricas)
 
 ---
 
-## 📁 Estructura del Repositorio
+## Estructura del Repositorio
 
 ```
 proyecto-semestral/
@@ -75,7 +75,7 @@ proyecto-semestral/
 
 ---
 
-## ✅ Requisitos Previos
+##  Requisitos Previos
 
 Tener instalado en tu PC:
 
@@ -87,7 +87,7 @@ Tener instalado en tu PC:
 
 ---
 
-## 🖥️ Ejecución Local (con Docker Compose)
+##  Ejecución Local (con Docker Compose)
 
 ```bash
 # 1. Clonar el repositorio
@@ -105,7 +105,7 @@ docker-compose up --build
 
 ---
 
-## ☁️ Despliegue en AWS EKS (paso a paso)
+##  Despliegue en AWS EKS (paso a paso)
 
 ### 1. Configurar credenciales AWS
 
@@ -242,7 +242,7 @@ El umbral del 50% permite que Kubernetes reaccione antes de que el servicio se s
 
 ---
 
-## 📝 Ver Logs
+##  Ver Logs
 
 ```bash
 # Logs del frontend

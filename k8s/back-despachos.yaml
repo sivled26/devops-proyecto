@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: back-despachos
-          image: 075692576990.dkr.ecr.us-east-1.amazonaws.com/innovatech-backend2:latest
+          image: 892274277213.dkr.ecr.us-east-1.amazonaws.com/innovatech-backend2:latest
           ports:
             - containerPort: 8081
           env:
